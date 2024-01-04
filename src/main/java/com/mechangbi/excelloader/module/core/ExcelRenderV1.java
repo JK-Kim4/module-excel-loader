@@ -7,9 +7,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,11 +15,11 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
-public class ExcelLoaderV1 {
+public class ExcelRenderV1 {
 
     private final CarService carService;
 
-    public ExcelLoaderV1(CarService carService){
+    public ExcelRenderV1(CarService carService){
         this.carService = carService;
     }
 
