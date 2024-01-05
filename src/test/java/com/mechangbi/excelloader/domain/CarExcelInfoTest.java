@@ -45,18 +45,16 @@ public class CarExcelInfoTest {
         CarExcelInfo car1 = carExcelInfoList.get(0);
         Class<?> clazz = car1.getClass();
         Field[] fields = clazz.getDeclaredFields();
-
-        for (Field field : fields){
-            Object value = null;
-
-            field.setAccessible(true);
-
-            try {
-                value = field.get(car1);
-
-                System.out.println(value);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+        for(CarExcelInfo carExcelInfo : carExcelInfoList){
+            for (Field field : fields){
+                Object value = null;
+                field.setAccessible(true);
+                try {
+                    value = field.get(carExcelInfo);
+                    System.out.println(value);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

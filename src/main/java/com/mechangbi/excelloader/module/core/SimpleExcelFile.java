@@ -53,6 +53,10 @@ public class SimpleExcelFile<E, T> {
         sheet = wb.createSheet();
         renderHeaders(sheet, ROW_START_INDEX, COLUMN_START_INDEX);
 
+        int rowIndex = ROW_START_INDEX + 1 ;
+        for (Object renderData : data){
+            renderBody(renderData, rowIndex++, COLUMN_START_INDEX);
+        }
     }
 
     private void renderHeaders(Sheet sheet, int rowStartIndex, int columnStartIndex) {
@@ -73,7 +77,24 @@ public class SimpleExcelFile<E, T> {
         Row row = sheet.createRow(rowIndex);
         int columnIndex = columnStartIndex;
 
+        for (Field field : fields){
+            Cell cell = row.createCell(columnIndex++);
+            field.setAccessible(true);
+            try {
+                renderCellValue(cell, field.get(data));
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
+    private void renderCellValue(Cell cell, Object cellValue){
+        if (cellValue instanceof Number){
+            Number numberValue = (Number) cellValue;
+            cell.setCellValue(numberValue.doubleValue());
+            return;
+        }
+        cell.setCellValue(cellValue == null ? "" : cellValue.toString());
     }
 
     private void setFields(Class<T> clazz){
