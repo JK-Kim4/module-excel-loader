@@ -18,7 +18,6 @@ public class SimpleExcelFile<E, T> {
 
     private SXSSFWorkbook wb;
     private Sheet sheet;
-
     private Field[] fields;
 
 
@@ -27,8 +26,17 @@ public class SimpleExcelFile<E, T> {
         this.wb = new SXSSFWorkbook();
         setFields(type);
 
+        if(data.isEmpty()){
+            throw new RuntimeException("excel data is empty");
+        }
+
+        int rowIndex = ROW_START_INDEX + 1;
+
+        for(Object renderData : data){
+            renderBody(renderData, rowIndex++, COLUMN_START_INDEX);
+        }
         //임시 호출
-        renderExcel(data);
+        //renderExcel(data);
     }
 
     //최대 행 수 검증
@@ -59,6 +67,13 @@ public class SimpleExcelFile<E, T> {
                 cell.setCellValue(ec.headerName());
             }
         }
+    }
+
+    private void renderBody(Object data, int rowIndex, int columnStartIndex){
+        Row row = sheet.createRow(rowIndex);
+        int columnIndex = columnStartIndex;
+
+
     }
 
     private void setFields(Class<T> clazz){
