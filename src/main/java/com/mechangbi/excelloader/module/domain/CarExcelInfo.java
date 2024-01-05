@@ -2,7 +2,7 @@ package com.mechangbi.excelloader.module.domain;
 
 import com.mechangbi.excelloader.module.core.annotation.ExcelColumn;
 
-public class CarExcelInfo {
+public class CarExcelInfo extends ExcelInfo{
 
     public CarExcelInfo(){}
 
@@ -24,6 +24,14 @@ public class CarExcelInfo {
 
     @ExcelColumn(headerName = "평점")
     private double rating;
+
+    /*Annotation 설정하지않은 Field 있을 경우 field.getAnnotation() throws NullPointException*/
+    private String tempField;
+
+    @Override
+    public String getHeaderName(String fieldName) {
+        return null;
+    }
 
     public String getCompany() {
         return company;
