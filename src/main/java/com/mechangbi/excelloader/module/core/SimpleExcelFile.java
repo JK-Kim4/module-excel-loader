@@ -7,6 +7,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -20,6 +24,8 @@ public class SimpleExcelFile<E, T> {
     private Sheet sheet;
     private Field[] fields;
 
+    private String filePath = "D:\\temp\\excel\\testExcelDefault.xlsx";;
+
 
     public SimpleExcelFile(List<T> data, Class<T> type){
         validateMaxRow(data);
@@ -30,13 +36,7 @@ public class SimpleExcelFile<E, T> {
             throw new RuntimeException("excel data is empty");
         }
 
-        int rowIndex = ROW_START_INDEX + 1;
-
-        for(Object renderData : data){
-            renderBody(renderData, rowIndex++, COLUMN_START_INDEX);
-        }
-        //임시 호출
-        //renderExcel(data);
+        renderExcel(data);
     }
 
     //최대 행 수 검증
@@ -55,7 +55,7 @@ public class SimpleExcelFile<E, T> {
 
         int rowIndex = ROW_START_INDEX + 1 ;
         for (Object renderData : data){
-            renderBody(renderData, rowIndex++, COLUMN_START_INDEX);
+            renderBody(sheet, renderData, rowIndex++, COLUMN_START_INDEX);
         }
     }
 
@@ -66,17 +66,15 @@ public class SimpleExcelFile<E, T> {
         for (Field field : this.fields){
             ExcelColumn ec = field.getAnnotation(ExcelColumn.class);
             if(ec != null){
-                System.out.println(ec.headerName());
                 Cell cell = row.createCell(columnIndex++);
                 cell.setCellValue(ec.headerName());
             }
         }
     }
 
-    private void renderBody(Object data, int rowIndex, int columnStartIndex){
+    private void renderBody(Sheet sheet, Object data, int rowIndex, int columnStartIndex){
         Row row = sheet.createRow(rowIndex);
         int columnIndex = columnStartIndex;
-
         for (Field field : fields){
             Cell cell = row.createCell(columnIndex++);
             field.setAccessible(true);
@@ -101,7 +99,20 @@ public class SimpleExcelFile<E, T> {
         this.fields = clazz.getDeclaredFields();
     }
 
-    public void write(){
+    public void write(OutputStream stream) throws IOException {
+        wb.write(stream);
+        wb.close();
+        wb.dispose();
+        stream.close();
+    }
+
+    public void writeFile() throws IOException{
+        File outputFile = new File(filePath);
+        FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
+        wb.write(fileOutputStream);
+        wb.close();
+        wb.dispose();
+        fileOutputStream.close();
     }
 
     public Sheet getSheet(){
